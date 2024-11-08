@@ -66,14 +66,16 @@ while IFS=, read -r version release_date last_commit; do
 
     # Revenir à la branche principale (master)
     git checkout master
+    
+    break
 
 done < "$MGL_DIR/commits_for_main_hive_versions.csv"
 
-# Créer une expression régulière pour `grep` afin de chercher les noms de fichiers dans final_metrics.csv
-pattern=$(printf "|%s" "${files_to_include[@]}")
-pattern="${pattern:1}"  # Supprime le premier '|'
+# # Créer une expression régulière pour `grep` afin de chercher les noms de fichiers dans final_metrics.csv
+# pattern=$(printf "|%s" "${files_to_include[@]}")
+# pattern="${pattern:1}"  # Supprime le premier '|'
 
-# Filtrer final_metrics.csv pour ne garder que les fichiers présents dans filtered_couples.csv
-awk -F, -v pattern="$pattern" 'NR==1 || $3 ~ pattern' "$OUTPUT_FILE" >> "$FILTERED_OUTPUT_FILE"
+# # Filtrer final_metrics.csv pour ne garder que les fichiers présents dans filtered_couples.csv
+# awk -F, -v pattern="$pattern" 'NR==1 || $3 ~ pattern' "$OUTPUT_FILE" >> "$FILTERED_OUTPUT_FILE"
 
 echo "Finished analyzing all versions"
