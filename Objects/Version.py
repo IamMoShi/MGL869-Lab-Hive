@@ -122,7 +122,8 @@ class Version:
         return self.id != other.id
 
     # Specific methods --------------------------------------------------------
-    diff_commits: dict = dict()
+    files_found: set = set()
+
     def git_diff(self) -> dict:
         version_commits: list[Commit] = self.getVersionCommits()
 
@@ -130,7 +131,9 @@ class Version:
 
         for commit in version_commits:
             files = dict(commit.stats.files)
+            diff_commit = {file: {'insertion': 0, 'deletion': 0, 'lines': 0} for file in files}
             for file in files:
+                Version.files_found.add(file)
                 if file not in output:
                     output[file] = dict()
                     output[file]['insertions'] = 0
@@ -141,6 +144,9 @@ class Version:
                 output[file]['deletions'] += files[file]['deletions']
                 output[file]['lines'] += files[file]['lines']
                 output[file]['commits'].append(commit)
+                diff_commit[file]['insertion'] = files[file]['insertions']
+                diff_commit[file]['deletion'] = files[file]['deletions']
+                diff_commit[file]['lines'] = files[file]['lines']
 
         return output
 
@@ -166,3 +172,15 @@ class Version:
             output.append(commit.repo.commit(c))
 
         return output
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "date": self.date,
+            "previous_version": self.previous_version,
+            "next_versions": self.next_versions,
+            "bugs": self.bugs,
+            "commits_logs": self.commits_logs,
+            "version_commits": self.version_commits,
+            "diff": self.diff
+        }
