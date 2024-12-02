@@ -8,3 +8,5 @@ __pycache__/
 
 # Ignore all .ipynb_checkpoints directories
 .ipynb_checkpoints/
+/lab/
+.DS_Store
