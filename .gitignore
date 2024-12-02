@@ -3,3 +3,8 @@
 /.idea/
 docker.env
 /data/
+# Ignore all __pycache__ directories
+__pycache__/
+
+# Ignore all .ipynb_checkpoints directories
+.ipynb_checkpoints/
