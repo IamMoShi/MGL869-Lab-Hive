@@ -1,0 +1,6 @@
+from IA_models.load_data import load_data
+from IA_models.KFold_XY import KFold_XY
+from IA_models.plot_SHAP import plot_SHAP
+from IA_models.logistic_regression_treatment import logistic_regression_treatment
+from IA_models.random_forest_treatment import random_forest_treatment
+from IA_models.fit_model_silently import fit_model_silently
