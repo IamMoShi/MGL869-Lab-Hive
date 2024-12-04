@@ -17,13 +17,13 @@ bugs in software [Hive](https://hive.com/).
 
 ## Authors
 
-- [Léo FORNOFF](leo.fornoff.1@ens.etsmtl.ca)
-- [William PHAN](william.phan.1@ens.etsmtl.ca)
-- [Yannis OUAKRIM](yannis.ouakrim.1@ens.etsmtl.ca)
+- Léo FORNOFF [leo.fornoff.1@ens.etsmtl.ca]()
+- William PHAN [william.phan.1@ens.etsmtl.ca]()
+- Yannis OUAKRIM [yannis.ouakrim.1@ens.etsmtl.ca]()
 
 ## Supervisor
 
-- [Mohammed SAYAGH, Ph.D., AP](mohammed.sayagh@etsmtl.ca)
+- Mohammed SAYAGH, Ph.D., AP
 
 ---
 
