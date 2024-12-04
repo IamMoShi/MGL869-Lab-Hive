@@ -41,7 +41,6 @@ bugs in software [Hive](https://hive.com/).
 - Python 3.11 or 3.12
 - Pip
 - Virtualenv
-- Jupyter Notebook
 - Required packages (see [requirements.txt](requirements.txt))
 - Git
 - [Scitools Understand](https://scitools.com/)
@@ -60,13 +59,16 @@ pip3 install -r requirements.txt
 
 4. Adapte configuration file `config.ini` to your environment. Especially, you need to set the path to the `und`
    executable of Understand.
-5. Run the Jupyter Notebook
+5. To shorten the execution time, you can download the raw metrics from
+   understand [here](https://drive.google.com/file/d/1Ziu7BzppBlgHrqo7_aWD4ElFZxz_kLgt/view?usp=drive_link). Otherwise,
+   you may need to adapt the path to the metrics in the configuration file `config.ini` to rebuild the metrics.
+6. Run the Jupyter Notebook
 
 ```bash
 jupyter notebook
 ```
 
-6. Open the notebook 'run.ipynb' and run the cells
+7. Open the notebook 'run.ipynb' and run the cells
 
 > First run will take a lot of time because it will clone the repo, download the dataset and run the analysis.
 
