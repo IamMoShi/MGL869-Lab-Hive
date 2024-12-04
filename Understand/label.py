@@ -20,6 +20,10 @@ def label_all_metrics(couples_df: pd.DataFrame) -> None:
     output_dir = path.join(base_dir, config["OUTPUT"]["LabeledMetricsOutputDirectory"])
     csv_separator = config["GENERAL"].get("CSVSeparatorMetrics", ",")
 
+    if config['UNDERSTAND'].get('SkipLabelization', 'No').lower() == 'yes':
+        print("Labelization process is skipped as per configuration.")
+        return
+
     # Ensure the output directory exists
     if not path.exists(output_dir):
         print(f"Creating output directory: {output_dir}")
