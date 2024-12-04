@@ -3,7 +3,7 @@ import pandas as pd
 
 
 def is_a_patch(file: str) -> bool:
-    return not file.endswith(".0_labeled_metrics.csv")
+    return not file.endswith(".0_static_metrics.csv")
 
 
 def load_data(directory: str):

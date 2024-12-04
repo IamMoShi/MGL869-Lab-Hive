@@ -4,3 +4,8 @@ from IA_models.plot_SHAP import plot_SHAP
 from IA_models.logistic_regression_treatment import logistic_regression_treatment
 from IA_models.random_forest_treatment import random_forest_treatment
 from IA_models.fit_model_silently import fit_model_silently
+from IA_models.logistic_plot_metrics_evolution import logistic_plot_metrics_evolution
+from IA_models.plot_AUC import plot_AUC
+from IA_models.plot_recall import plot_recall
+from IA_models.plot_precision import plot_precision
+from IA_models.generate_model_report import generate_model_report
