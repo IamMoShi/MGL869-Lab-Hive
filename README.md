@@ -56,6 +56,7 @@ pip3 install -r requirements.txt
 ```
 
 > Note: You may need to adapt according to your system
+> For MacOS users, compatible Python versions are up to 3.12. Do not use 3.13 or later versions.
 
 4. Adapte configuration file `config.ini` to your environment. Especially, you need to set the path to the `und`
    executable of Understand.

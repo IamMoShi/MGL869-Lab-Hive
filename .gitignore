@@ -4,10 +4,13 @@
 /.idea/
 docker.env
 /data/
+/venv/
 # Ignore all __pycache__ directories
 __pycache__/
 
 # Ignore all .ipynb_checkpoints directories
 .ipynb_checkpoints/
 /lab/
+
+# Ignore all .DS_Store for Mac users
 .DS_Store
