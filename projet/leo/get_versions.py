@@ -9,8 +9,8 @@ def get_versions(repository: Repo, minimal_version=(2, 0, 0)) -> [Version]:
     """
     Use the regex of the config file to get the versions of the repository
     :param minimal_version: Above this, versions will be considered as valid
-    :param repository: The repository to get the versions
-    :return: The versions of the repository
+    :param repository: The repository to get  versions
+    :return: Versions of the repository
     """
 
     config = ConfigParser()
@@ -73,6 +73,11 @@ def build_versions_dependencies(versions: [Version]):
         previous_version = found_previous_version(versions, i)
         version.setPreviousVersion(previous_version)
         print(f"Version {version.id} built !")
+
+    for i in range(len(versions)):
+        version = versions[i]
+        version.calculate_metrics()
+        print(f"Metrics calculated for version {version.id}")
 
     versions[0].setPreviousVersion(None)
     versions[0].next_versions.remove(versions[0])

@@ -1,9 +1,11 @@
-from configparser import ConfigParser
-from os import path
+import pickle
 
 from DateTime import DateTime
-from git import Commit, Tag
-from subprocess import run, PIPE, CompletedProcess
+from git import Commit, Tag, Repo
+import pydriller
+import projet.leo.metrics as my_metrics
+
+from projet.leo.extract_data import extract_data
 
 
 class Version:
@@ -20,31 +22,41 @@ class Version:
         self.date: DateTime or None = tag.commit.committed_datetime
         self.previous_version: "Version" or None = None
         self.next_versions: ["Version"] = set()
-        self.bugs: ["Bug"] = set()
-        self.commits_logs: [Commit] = Version.git_log(self)
-        self.version_commits: [Commit] = []
-        self.diff: dict = dict()
+        self.version_commits: {"str": dict} = {}
+        self.metrics: {str: {str: float}} = {}
 
     # Setters -----------------------------------------------------------------
     def setPreviousVersion(self, previous_version: "Version" or None) -> None:
         self.previous_version = previous_version
         if previous_version is not None:
             previous_version.addNextVersion(self)
-            commits_logs_previous_version: [Commit] = previous_version.getCommitsLogs()
-            for commit in self.commits_logs:
-                if commit in commits_logs_previous_version:
-                    break
-                self.version_commits.append(commit)
-            self.diff = self.git_diff()
+            self.version_commits = {}
+            print(f"Building version {self.id}, previous version is {previous_version.id}")
+            if previous_version != self:
+                pydriller_repo = pydriller.Repository(self.getRepo().working_dir, from_tag=previous_version.getTag().name,
+                                                      to_tag=self.getTag().name)
+            else:
+                pydriller_repo = pydriller.Repository(self.getRepo().working_dir,
+                                                      to_tag=self.getTag().name)
+            for commit in pydriller_repo.traverse_commits():
+                self.version_commits[commit.hash] = extract_data(commit)
+
+    def calculate_metrics(self):
+        """
+        Run after creating all versions to calculate metrics.s
+        """
+        # Calculate metrics
+        self.metrics["added_lines"] = my_metrics.added_lines(self)
+        self.metrics["deleted_lines"] = my_metrics.deleted_lines(self)
+        self.metrics["commit_count"] = my_metrics.commit_count(self)
+        self.metrics["commit_count_r"] = my_metrics.commit_count_r(self)
+        self.metrics["dev_count"] = my_metrics.dev_count(self)
+        self.metrics["dev_count_r"] = my_metrics.dev_count_r(self)
+        self.metrics["mean_time"] = my_metrics.mean_time(self)
+        # self.metrics["mean_time_r"] = my_metrics.mean_time_r(self)
 
     def addNextVersion(self, next_version: "Version") -> None:
         self.next_versions.add(next_version)
-
-    def addBug(self, bug: "Bug") -> None:
-        self.bugs.add(bug)
-
-    def removeBug(self, bug: "Bug") -> None:
-        self.bugs.remove(bug)
 
     # Getters -----------------------------------------------------------------
 
@@ -53,6 +65,9 @@ class Version:
 
     def getId(self) -> (int, int, int):
         return self.id
+
+    # ---------------------------------
+    # Git methods ---------------------
 
     def getTag(self) -> Tag:
         return self.tag
@@ -73,28 +88,35 @@ class Version:
         output.sort()
         return output
 
-    def getRepo(self):
+    def getRepo(self) -> Repo:
         return self.tag.repo
 
     def getBranch(self) -> str:
         branch_name: str = f"origin/branch-{self.id[0]}.{self.id[1]}"
         return branch_name
 
-    def getCommitsLogs(self) -> [Commit]:
-        return self.commits_logs
+    # ---------------------------------
+    # Version categorization ----------
 
-    def getVersionCommits(self) -> [Commit]:
-        return self.version_commits
+    def isPatch(self) -> bool:
+        identifier = self.id
+        return identifier[2] != 0
 
-    def getDiff(self) -> dict:
-        return self.diff
+    def isMinor(self) -> bool:
+        identifier = self.id
+        return identifier[2] == 0 and identifier[1] != 0
+
+    def isMajor(self) -> bool:
+        identifier = self.id
+        return identifier[2] == 0 and identifier[1] == 0
 
     # Python internal methods -------------------------------------------------
 
+    # ---------------------------------
+    # Representation methods ----------
+
     def __str__(self):
         buffer: str = f"Version " + ".".join(map(str, self.id))
-        for bug in self.bugs:
-            buffer += f"\n\t{bug}"
         return buffer
 
     def __repr__(self):
@@ -102,6 +124,9 @@ class Version:
 
     def __hash__(self):
         return hash(self.id)
+
+    # ---------------------------------
+    # Comparison methods --------------
 
     def __eq__(self, other):
         return self.id == other.id
@@ -121,66 +146,25 @@ class Version:
     def __ne__(self, other):
         return self.id != other.id
 
-    # Specific methods --------------------------------------------------------
-    files_found: set = set()
+    # ---------------------------------
+    # Class methods -------------------
 
-    def git_diff(self) -> dict:
-        version_commits: list[Commit] = self.getVersionCommits()
+    @classmethod
+    def getVersion(cls, identifier: (int, int, int)) -> "Version":
+        return cls._instances[identifier]
 
-        output: dict = {str: dict}
+    # Sauvegarder les instances de la classe Version
+    @classmethod
+    def save_versions(cls, file_path):
+        # Accéder à toutes les instances via Version._instances
+        with open(file_path, 'wb') as f:
+            pickle.dump(cls._instances, f)
+        print(f"Instances saved to {file_path}")
 
-        for commit in version_commits:
-            files = dict(commit.stats.files)
-            diff_commit = {file: {'insertion': 0, 'deletion': 0, 'lines': 0} for file in files}
-            for file in files:
-                Version.files_found.add(file)
-                if file not in output:
-                    output[file] = dict()
-                    output[file]['insertions'] = 0
-                    output[file]['deletions'] = 0
-                    output[file]['lines'] = 0
-                    output[file]['commits'] = []
-                output[file]['insertions'] += files[file]['insertions']
-                output[file]['deletions'] += files[file]['deletions']
-                output[file]['lines'] += files[file]['lines']
-                output[file]['commits'].append(commit)
-                diff_commit[file]['insertion'] = files[file]['insertions']
-                diff_commit[file]['deletion'] = files[file]['deletions']
-                diff_commit[file]['lines'] = files[file]['lines']
+    # Charger les instances de la classe Version
+    @classmethod
+    def load_versions(cls, file_path):
+        with open(file_path, 'rb') as f:
+            loaded_instances = pickle.load(f)
 
-        return output
-
-    @staticmethod
-    def git_log(version: "Version") -> [Commit]:
-        # Command : git log --pretty=format:"%H" --no-patch commit.hexsha
-
-        config = ConfigParser()
-        config.read('config.ini')
-        hive_git_directory = config["GIT"]["HiveGitDirectory"]
-        hive_git_repo_name = config["GIT"]["HiveGitRepoName"]
-        data_directory = config["GENERAL"]["DataDirectory"]
-
-        repo_path = path.join(data_directory, hive_git_directory, hive_git_repo_name)
-
-        commit: Commit = version.getCommit()
-        command: [str] = ["git", "log", "--pretty=format:%H", "--no-patch", commit.hexsha]
-        process: CompletedProcess = run(command, stdout=PIPE, stderr=PIPE, cwd=repo_path)
-        commits_str: [str] = process.stdout.decode().strip().split("\n")
-
-        output: [Commit] = []
-        for c in commits_str:
-            output.append(commit.repo.commit(c))
-
-        return output
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "date": self.date,
-            "previous_version": self.previous_version,
-            "next_versions": self.next_versions,
-            "bugs": self.bugs,
-            "commits_logs": self.commits_logs,
-            "version_commits": self.version_commits,
-            "diff": self.diff
-        }
+        print(f"Instances loaded from {file_path}")
