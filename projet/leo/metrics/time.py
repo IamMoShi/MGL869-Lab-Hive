@@ -33,25 +33,25 @@ def mean_time(version: Version) -> {str: float}:
 
 
 def mean_time_r(version: Version) -> {str: float}:
-    def recursive(v: Version, ans: {str: float}, time_memory: {str, list[datetime]}):
+    def recursive(v: Version, time_memory: {str, list[datetime]}):
         if v is None:
             return ans
-        commits: {"str": dict} = v.version_commits
+        commits: {"str": dict} = version.version_commits
 
         for commit_hash in commits:
             commit = commits[commit_hash]
             for file in commit["modified_files"]:
                 file_name = file["filename"]
                 if file_name not in ans:
-                    ans[file_name] = 0
                     time_memory[file_name] = []
                 time_memory[file_name].append(commit["author_date"])
 
-        return recursive(v.getPreviousVersion(), ans, time_memory)
+        return recursive(v.getPreviousVersion(), time_memory)
 
-    ans = recursive(version, {}, {})
-    for file in ans:
-        times = ans[file]
+    ans = {}
+    time_memory = recursive(version, {})
+    for file in time_memory:
+        times = time_memory[file]
         if len(times) == 0 or len(times) == 1:
             ans[file] = 0
         else:

@@ -50,10 +50,16 @@ class Version:
         self.metrics["deleted_lines"] = my_metrics.deleted_lines(self)
         self.metrics["commit_count"] = my_metrics.commit_count(self)
         self.metrics["commit_count_r"] = my_metrics.commit_count_r(self)
+        self.metrics["commit_bug_count"] = my_metrics.commit_bug_count(self)
         self.metrics["dev_count"] = my_metrics.dev_count(self)
         self.metrics["dev_count_r"] = my_metrics.dev_count_r(self)
         self.metrics["mean_time"] = my_metrics.mean_time(self)
-        # self.metrics["mean_time_r"] = my_metrics.mean_time_r(self)
+        self.metrics["mean_time_r"] = my_metrics.mean_time_r(self)
+        self.metrics["commit_bug_count"] = my_metrics.commit_bug_count(self)
+        self.metrics["dev_mean_exp"] = my_metrics.dev_mean_exp(self)
+        self.metrics["dev_min_exp"] = my_metrics.dev_min_exp(self)
+        self.metrics["commit_comment_changed"], self.metrics["commit_comment_unchanged"] = my_metrics.commit_comment(self)
+
 
     def addNextVersion(self, next_version: "Version") -> None:
         self.next_versions.add(next_version)

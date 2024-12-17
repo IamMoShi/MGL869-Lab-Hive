@@ -74,10 +74,9 @@ def build_versions_dependencies(versions: [Version]):
         version.setPreviousVersion(previous_version)
         print(f"Version {version.id} built !")
 
+    versions[0].setPreviousVersion(None)
+    versions[0].next_versions.remove(versions[0])
+
     for i in range(len(versions)):
         version = versions[i]
         version.calculate_metrics()
-        print(f"Metrics calculated for version {version.id}")
-
-    versions[0].setPreviousVersion(None)
-    versions[0].next_versions.remove(versions[0])
