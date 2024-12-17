@@ -1,6 +1,6 @@
 /commit_files/
 /.venv/
-/.env/
+/env/
 /.idea/
 docker.env
 /data/

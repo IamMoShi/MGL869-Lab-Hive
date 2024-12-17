@@ -10,11 +10,13 @@ def plot_AUC(y_test: dict, y_pred_log: dict, y_pred_rf: dict) -> None:
     for key in versions:
         auc_log.append(roc_auc_score(y_test[key], y_pred_log[key]))
 
+    print(auc_log)
     # Random Forest
     auc_rf = []
     for key in versions:
         auc_rf.append(roc_auc_score(y_test[key], y_pred_rf[key]))
 
+    print(auc_rf)
     # Plot
     plt.figure(figsize=(10, 6))
 

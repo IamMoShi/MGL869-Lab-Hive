@@ -11,6 +11,8 @@ import glob
 import shutil
 import os
 
+import stat
+
 def create_understand_project(projet_directory: str, name: str):
     """
 
@@ -21,6 +23,10 @@ def create_understand_project(projet_directory: str, name: str):
     projet_path: str = path.join(projet_directory, name)
     und_create_command(project_path=projet_path)
 
+def remove_readonly(func, path, exc_info):
+    # Supprimer l'attribut "lecture seule" et réessayer
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
 
 def create_version_repo(commit, version: str) -> (Repo, str):
     """
@@ -50,7 +56,7 @@ def create_version_repo(commit, version: str) -> (Repo, str):
     if path.exists(temp_version_path):
         # Delete the directory if it exists
         print(f"Deleting previous the directory: {temp_version_path}")
-        rmtree(temp_version_path)
+        rmtree(temp_version_path, onerror=remove_readonly)
 
     print(f"Creating the directory: {temp_version_path}")
     makedirs(temp_version_path)
@@ -122,6 +128,7 @@ def multi_threaded_analysis(versions: dict, num_threads: int) -> None:
                 # Retrieve the result (if analyze_commit returns something)
                 future.result()
                 print(f"{i}/{len(versions)} - Successfully analyzed version: {version}")
+                i += 1
             except Exception as e:
                 print(f"Error analyzing commit {version}: {e}")
                 i += 1
@@ -171,7 +178,7 @@ def metrics(versions: dict, limit: int = None):
     for version in versions.keys():
         version_temp_path = path.join(temp_repo_path, version)
 
-        csv_files = glob.glob(path.join(version_temp_path, "*.csv"))
+        csv_files = glob.glob(path.join(metrics_output_path, "*.csv"))
         if csv_files:
             metrics_csv = csv_files[0]
             shutil.copy(metrics_csv, path.join(metrics_output_path, f"{version}_metrics.csv"))
@@ -181,10 +188,10 @@ def metrics(versions: dict, limit: int = None):
 
         # Supprimer le répertoire de la version
         if path.exists(version_temp_path):
-            rmtree(version_temp_path)
+            rmtree(version_temp_path, onerror=remove_readonly)
             print(f"Temporary repository for version {version} removed.")
 
     # Suppression du répertoire temporaire
     if path.exists(temp_repo_path):
         print(f"Removing the entire temporary repository: {temp_repo_path}")
-        shutil.rmtree(temp_repo_path)
+        shutil.rmtree(temp_repo_path, onerror=remove_readonly)
