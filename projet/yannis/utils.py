@@ -5,9 +5,10 @@ import subprocess
 import git
 import csv
 import logging
+import os
 import re
-from tree import Node, print_tree, visualize_tree
 from collections import defaultdict
+from projet.yannis.tree import Node, print_tree, visualize_tree
 
 class Metrics():
     def __init__(self, repo : git.Repo, currentVersion : str, previousVersion : str, file_path : str):
@@ -436,8 +437,11 @@ def treeVersions(repo, show=False) -> Node:
             version_numbers = tuple([int(k) for k in version_numbers.group().split('.')])
         else:
             continue
+        currentDir = os.getcwd()
+        work_tree = f"{currentDir}\\data\\temp_repositories\\hive"
+        git_dir = f"{work_tree}\\.git"
         dateReleaseCmd = subprocess.run(
-            ["git", "log", "-1", f"--format=%ai", version],
+            ["git", f"--git-dir={git_dir}", "log", "-1", f"--format=%ai", version],
             capture_output=True,
             text=True
         )

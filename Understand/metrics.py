@@ -96,13 +96,13 @@ def analyze_commit(commit: Commit, version: str) -> str:
     print(f"Analyzing commit {commit.hexsha}")
 
     # Run the analysis
-    und_add_command(repo.working_dir, und_project)
+    #und_add_command(repo.working_dir, und_project)
 
     # Analyze the code
-    und_analyze_command(und_project)
+    #und_analyze_command(und_project)
 
     # Extract the metrics
-    und_metrics_command(und_project)
+    #und_metrics_command(und_project)
 
     return version
 
@@ -178,7 +178,7 @@ def metrics(versions: dict, limit: int = None):
     for version in versions.keys():
         version_temp_path = path.join(temp_repo_path, version)
 
-        csv_files = glob.glob(path.join(metrics_output_path, "*.csv"))
+        csv_files = glob.glob(path.join(version_temp_path, "*.csv"))
         if csv_files:
             metrics_csv = csv_files[0]
             shutil.copy(metrics_csv, path.join(metrics_output_path, f"{version}_metrics.csv"))
@@ -186,12 +186,12 @@ def metrics(versions: dict, limit: int = None):
         else:
             print(f"No CSV file found for version {version} in {version_temp_path}")
 
-        # Supprimer le répertoire de la version
-        if path.exists(version_temp_path):
-            rmtree(version_temp_path, onerror=remove_readonly)
-            print(f"Temporary repository for version {version} removed.")
+        # # Supprimer le répertoire de la version
+        # if path.exists(version_temp_path):
+        #     rmtree(version_temp_path, onerror=remove_readonly)
+        #     print(f"Temporary repository for version {version} removed.")
 
     # Suppression du répertoire temporaire
-    if path.exists(temp_repo_path):
-        print(f"Removing the entire temporary repository: {temp_repo_path}")
-        shutil.rmtree(temp_repo_path, onerror=remove_readonly)
+    # if path.exists(temp_repo_path):
+    #     print(f"Removing the entire temporary repository: {temp_repo_path}")
+    #     shutil.rmtree(temp_repo_path, onerror=remove_readonly)

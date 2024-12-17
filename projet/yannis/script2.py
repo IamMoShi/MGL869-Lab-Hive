@@ -2,11 +2,14 @@ from utils import treeVersions
 import git
 import logging
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
+def main():
+    # Configuration du logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s"
+    )
 
-repo_path = "../hive"
-repo = git.Repo(repo_path)
-treeVersions(repo)
+    # Cloner ou accéder au dépôt Git de Hive
+    repo_path = "../hive"
+    repo = git.Repo(repo_path)
+    treeVersions(repo)

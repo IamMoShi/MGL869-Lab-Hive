@@ -1,0 +1,11 @@
+version,commitId,file,addedLines,removedLines,nbCommits,nbCommitsPreviousSolveBug,nbCommitsPreviousEdited,nbDevelopers,nbDevelopersPrevious,averageTimeBetweenEdits,averageTimeBetweenEditsPrevious,averageExpertiseDeveloper,minimumExpertiseDeveloper,nbCommitsCommentEdited,nbCommitsNoCommentEdited,bugStatus
+rel/release-2.3.0,08e17ea53ae26e06d28661ac7d1b15cc870c889c,.arcconfig,0,0,0,0,0,0,0,,,0,0,0,0,0
+rel/release-2.3.0,08e17ea53ae26e06d28661ac7d1b15cc870c889c,.checkstyle,0,0,0,0,0,0,0,,,0,0,0,0,0
+rel/release-2.3.0,08e17ea53ae26e06d28661ac7d1b15cc870c889c,.gitattributes,0,0,0,0,0,0,0,,,0,0,0,0,0
+rel/release-2.3.0,08e17ea53ae26e06d28661ac7d1b15cc870c889c,.gitignore,0,0,0,0,0,0,0,,,0,0,0,0,0
+rel/release-2.3.0,08e17ea53ae26e06d28661ac7d1b15cc870c889c,.reviewboardrc,0,0,0,0,0,0,0,,,0,0,0,0,0
+rel/release-2.3.0,08e17ea53ae26e06d28661ac7d1b15cc870c889c,.travis.yml,0,0,0,0,0,0,0,,,0,0,0,0,0
+rel/release-2.3.0,08e17ea53ae26e06d28661ac7d1b15cc870c889c,LICENSE,0,0,0,0,0,0,0,,,0,0,0,0,0
+rel/release-2.3.0,08e17ea53ae26e06d28661ac7d1b15cc870c889c,NOTICE,0,0,0,0,0,0,0,,,0,0,0,0,0
+rel/release-2.3.0,08e17ea53ae26e06d28661ac7d1b15cc870c889c,README.md,0,0,0,0,0,0,0,,,0,0,0,0,0
+rel/release-2.3.0,08e17ea53ae26e06d28661ac7d1b15cc870c889c,RELEASE_NOTES.txt,0,0,0,0,0,0,0,,,0,0,0,0,0
